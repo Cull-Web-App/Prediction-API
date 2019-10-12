@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29409.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prediction-API", "Prediction-API.csproj", "{620F0008-8C88-475B-B86A-019D126DF4D8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prediction-API.Tests", "..\Prediction-API.Tests\Prediction-API.Tests.csproj", "{BA5A0BAD-7DEA-4173-BBC9-BCDB5680E8BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{620F0008-8C88-475B-B86A-019D126DF4D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{620F0008-8C88-475B-B86A-019D126DF4D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{620F0008-8C88-475B-B86A-019D126DF4D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{620F0008-8C88-475B-B86A-019D126DF4D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA5A0BAD-7DEA-4173-BBC9-BCDB5680E8BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA5A0BAD-7DEA-4173-BBC9-BCDB5680E8BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA5A0BAD-7DEA-4173-BBC9-BCDB5680E8BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA5A0BAD-7DEA-4173-BBC9-BCDB5680E8BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D951994-70D2-49AE-8924-450D9533B321}
+	EndGlobalSection
+EndGlobal
