@@ -8,6 +8,6 @@ namespace Prediction_API.Services
 {
     public interface IStockTickerService
     {
-        public Task<List<StockTicker>> GetStockTickersAsync();
+        public Task<List<StockTicker>> GetStockTickersAsync(string ticker, string interval);
     }
 }
