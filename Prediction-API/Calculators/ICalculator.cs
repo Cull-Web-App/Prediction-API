@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace Prediction_API.Calculators
 {
-    public class SimpleLinearRegression
+    public interface ICalculator
     {
+        public T Calculate<T>();
     }
 }
