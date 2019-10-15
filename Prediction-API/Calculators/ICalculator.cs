@@ -7,6 +7,6 @@ namespace Prediction_API.Calculators
 {
     public interface ICalculator
     {
-        public T Calculate<T>();
+        public decimal Calculate(int index);
     }
 }

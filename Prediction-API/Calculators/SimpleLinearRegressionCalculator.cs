@@ -8,11 +8,17 @@ namespace Prediction_API.Calculators
 {
     public class SimpleLinearRegressionCalculator : ICalculator
     {
-        // Calculate the simple linear regression of a set of numbers -- what to return for this calc??
-        public BestFitLine Calculate(List<decimal> nums)
+        private BestFitLine BestFitLine { get; set; }
+
+        public SimpleLinearRegressionCalculator(List<decimal> nums)
         {
-            // Get the best fit line -- send the list of x and y values -- this can be used with the regression to calculate predictions at different intervals!!
-            return new BestFitLine(Enumerable.Range(0, nums.Count).ToList().ConvertAll(x => (decimal) x), nums);
+            this.BestFitLine = new BestFitLine(Enumerable.Range(0, nums.Count).ToList().ConvertAll(x => (decimal)x), nums);
+        }
+
+        // Calculate the best approximation using tthe best fit line
+        public decimal Calculate(int index)
+        {
+            return this.BestFitLine.ApproximateValueAtX(index);
         }
     }
 }
