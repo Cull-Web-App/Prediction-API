@@ -28,6 +28,9 @@ namespace Prediction_API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
+            // Inject the historical prediction service into the app
+            services.AddTransient<IHistoricalPredictionService, HistoricalPredictionService>();
+
             // Add each of the Typed Http clients for the services to DI -- this wires up both the interface and class for DI
             services.AddHttpClient<IStockTickerService, StockTickerService>(client =>
             {

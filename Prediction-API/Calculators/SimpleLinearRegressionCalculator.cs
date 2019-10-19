@@ -12,7 +12,7 @@ namespace Prediction_API.Calculators
 
         public SimpleLinearRegressionCalculator(List<decimal> nums)
         {
-            this.BestFitLine = new BestFitLine(Enumerable.Range(0, nums.Count).ToList().ConvertAll(x => (decimal)x), nums);
+            this.BestFitLine = new BestFitLine(Enumerable.Range(0, nums.Count).ToList().ConvertAll(x => (decimal) x), nums);
         }
 
         // Calculate the best approximation using tthe best fit line

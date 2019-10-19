@@ -15,10 +15,12 @@ namespace Prediction_API.Controllers
     public class PredictionController : ControllerBase
     {
         private readonly IStockTickerService stockTickerService;
+        private readonly IHistoricalPredictionService historicalPredictionService;
 
-        public PredictionController(IStockTickerService stockTickerService)
+        public PredictionController(IStockTickerService stockTickerService, IHistoricalPredictionService historicalPredictionService)
         {
             this.stockTickerService = stockTickerService;
+            this.historicalPredictionService = historicalPredictionService;
         }
 
         // POST: Prediction -- Create a new prediction and update it in the DB
