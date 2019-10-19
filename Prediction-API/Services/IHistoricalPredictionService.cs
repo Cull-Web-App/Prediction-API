@@ -10,5 +10,6 @@ namespace Prediction_API.Services
     {
         public Task<decimal> GetPrediction(string tickerSymbol, DateTime dateTime);
         public Task<List<Prediction>> GetPredictionsInRange(string tickerSymbol, DateTime start, DateTime end);
+        public Task<Prediction> AddPrediction(Prediction prediction);
     }
 }

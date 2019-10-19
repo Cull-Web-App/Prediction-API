@@ -19,7 +19,8 @@ namespace Prediction_API.Services
         {
             get
             {
-                return new SqlConnection(this.configuration.GetConnectionString(""));
+                // TODO: Use constant for this connection string
+                return new SqlConnection(this.configuration.GetConnectionString("PredictionStore"));
             }
         }
 
@@ -34,7 +35,9 @@ namespace Prediction_API.Services
             // Connections are disposable!
             using (IDbConnection connection = this.Connection)
             {
-
+                // TODO: Replace spName with the sproc name in Aurora Serverless
+                IEnumerable<decimal> prediction = await connection.QueryAsync<decimal>("spName", commandType: CommandType.StoredProcedure);
+                return prediction.First();
             }
         }
 
@@ -43,7 +46,33 @@ namespace Prediction_API.Services
             // Get all the predictions for a ticker in the defined range
             using (IDbConnection connection = this.Connection)
             {
+                IEnumerable<Prediction> predictions = await connection.QueryAsync<Prediction>("spName", commandType: CommandType.StoredProcedure);
+                return predictions.ToList();
+            }
+        }
 
+        public async Task<Prediction> AddPrediction(Prediction prediction)
+        {
+            // Add the new prediction for this ticker to the RDS DB -- can't use Dapper on updates!
+            using (IDbConnection connection = this.Connection)
+            {
+                int numAffectedRows = await connection.ExecuteAsync(
+                    "spName",
+                    commandType: CommandType.StoredProcedure,
+                    param: new
+                    {
+                        Symbol = prediction.Ticker,
+                        Date = prediction.Date,
+                        Price = prediction.Price
+                    }
+                );
+
+                if (numAffectedRows != 1)
+                {
+                    throw new ApplicationException(string.Format("Failed to add prediction for ticker {0} for date {1} of price {2}", prediction.Ticker, prediction.Date, prediction.Price));
+                }
+
+                return prediction;
             }
         }
     }

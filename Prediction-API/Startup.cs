@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Prediction_API.Services;
-using Prediction_API.Constants;
 
 namespace Prediction_API
 {
@@ -35,7 +34,7 @@ namespace Prediction_API
             services.AddHttpClient<IStockTickerService, StockTickerService>(client =>
             {
                 // Add all of this HTTP clients configurations here!
-                client.BaseAddress = new Uri(APIUrlsConfig.FinancialDataAPI);
+                client.BaseAddress = new Uri(Startup.Configuration.GetValue<string>("API_URLS:FinancialDataAPI"));
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
         }

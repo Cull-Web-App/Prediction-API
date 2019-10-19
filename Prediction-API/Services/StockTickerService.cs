@@ -18,7 +18,7 @@ namespace Prediction_API.Services
             this.httpClient = httpClient;
         }
 
-        public async Task<List<StockTicker>> GetStockTickersAsync(string ticker, string interval = "1d")
+        public async Task<List<StockTicker>> GetStockTickersAsync(string ticker, string interval = "1y")
         {
             // Construct the request path for this get request -- add query parameters for the get -- should go off the base URI from client
             string requestPath = string.Format("/data?ticker={0}&interval={1}", ticker, interval);

@@ -7,7 +7,8 @@ namespace Prediction_API.Models
 {
     public class Prediction
     {
+        public string Ticker { get; set; }
         public DateTime Date { get; set; }
-        public decimal price { get; set; }
+        public decimal Price { get; set; }
     }
 }
