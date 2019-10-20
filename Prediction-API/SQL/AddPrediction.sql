@@ -1,7 +1,8 @@
-CREATE PROCEDURE AddPrediction(IN symbol VARCHAR(6), IN prediction_date DATETIME, IN price DECIMAL(60, 30))
-BEGIN
+CREATE OR REPLACE FUNCTION AddPrediction(symbol VARCHAR(6), prediction_date TIMESTAMP, price DECIMAL(60, 30))
+	RETURNS VOID
+AS $$
 	START TRANSACTION;
-		INSERT INTO Predictions(symbol, prediction_date, price)
-		VALUES (symbol, prediction_date, price);
-	COMMIT;
-END
+        INSERT INTO predictions(symbol, prediction_date, price, accuracy_score)
+        VALUES (symbol, prediction_date, price, NULL);
+	COMMIT TRANSACTION;
+$$ LANGUAGE SQL;

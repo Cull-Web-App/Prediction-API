@@ -7,6 +7,6 @@ namespace Prediction_API.Constants
 {
     public static class CalculationConstants
     {
-        public static int DEFAULT_MOVING_AVERAGE_PERIOD = 20;
+        public const int DEFAULT_MOVING_AVERAGE_PERIOD = 20;
     }
 }

@@ -6,7 +6,9 @@ using System.Data;
 using System.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Dapper;
+using Npgsql;
 using Prediction_API.Models;
+using Prediction_API.Constants;
 
 namespace Prediction_API.Services
 {
@@ -20,7 +22,7 @@ namespace Prediction_API.Services
             get
             {
                 // TODO: Use constant for this connection string
-                return new SqlConnection(this.configuration.GetConnectionString("PredictionStore"));
+                return new NpgsqlConnection(this.configuration.GetConnectionString("PredictionStore-LOCAL"));
             }
         }
 
@@ -37,7 +39,7 @@ namespace Prediction_API.Services
             {
                 // TODO: Replace spName with the sproc name in Aurora Serverless
                 IEnumerable<decimal> prediction = await connection.QueryAsync<decimal>(
-                    "GetPrediction",
+                    StoredProcedureConstants.GetPrediction,
                     commandType: CommandType.StoredProcedure,
                     param: new
                     {
@@ -55,7 +57,7 @@ namespace Prediction_API.Services
             using (IDbConnection connection = this.Connection)
             {
                 IEnumerable<Prediction> predictions = await connection.QueryAsync<Prediction>(
-                    "GetPredictionsInRange",
+                    StoredProcedureConstants.GetPredictionsInRange,
                     commandType: CommandType.StoredProcedure,
                     param: new
                     {
@@ -74,7 +76,7 @@ namespace Prediction_API.Services
             using (IDbConnection connection = this.Connection)
             {
                 int numAffectedRows = await connection.ExecuteAsync(
-                    "spName",
+                    StoredProcedureConstants.AddPrediction,
                     commandType: CommandType.StoredProcedure,
                     param: new
                     {
