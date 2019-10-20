@@ -36,7 +36,15 @@ namespace Prediction_API.Services
             using (IDbConnection connection = this.Connection)
             {
                 // TODO: Replace spName with the sproc name in Aurora Serverless
-                IEnumerable<decimal> prediction = await connection.QueryAsync<decimal>("spName", commandType: CommandType.StoredProcedure);
+                IEnumerable<decimal> prediction = await connection.QueryAsync<decimal>(
+                    "GetPrediction",
+                    commandType: CommandType.StoredProcedure,
+                    param: new
+                    {
+                        Symbol = tickerSymbol,
+                        Prediction_Date = dateTime
+                    }
+                );
                 return prediction.First();
             }
         }
@@ -46,7 +54,16 @@ namespace Prediction_API.Services
             // Get all the predictions for a ticker in the defined range
             using (IDbConnection connection = this.Connection)
             {
-                IEnumerable<Prediction> predictions = await connection.QueryAsync<Prediction>("spName", commandType: CommandType.StoredProcedure);
+                IEnumerable<Prediction> predictions = await connection.QueryAsync<Prediction>(
+                    "GetPredictionsInRange",
+                    commandType: CommandType.StoredProcedure,
+                    param: new
+                    {
+                        Symbol = tickerSymbol,
+                        Start_Date = start,
+                        End_Date = end
+                    }
+                );
                 return predictions.ToList();
             }
         }
