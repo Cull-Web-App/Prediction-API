@@ -25,17 +25,18 @@ namespace Prediction_API.Controllers
             this.historicalPredictionService = historicalPredictionService;
         }
 
-        // POST: Prediction -- Create a new prediction and update it in the DB
         [HttpPost]
         public async Task<IActionResult> Predict([FromBody] string ticker, [FromBody] string interval, [FromBody] string date)
         {
             // Convert the string date to a DateTime object
             DateTime dateTime = Convert.ToDateTime(date);
 
+            // Probably should do some sort of check here to see if the date has already passed, because then actuals can be retrieved
+
             try
             {
                 // Check if this prediction has already been made -- if so return historical result
-                decimal predictedPrice = await this.historicalPredictionService.GetPrediction(ticker, dateTime);
+                decimal predictedPrice = await this.historicalPredictionService.GetPredictionAsync(ticker, dateTime);
 
                 return Json(new Prediction()
                 {
@@ -56,10 +57,18 @@ namespace Prediction_API.Controllers
                     SimpleMovingAverageCalculator simpleMovingAverageCalculator = new SimpleMovingAverageCalculator();
                     WeightedMovingAverageCalculator weightedMovingAverageCalculator = new WeightedMovingAverageCalculator();
 
-                    // Do the calculations for the moving averages
-                    List<decimal> simpleMovingAverages = simpleMovingAverageCalculator.Calculate(closePrices, CalculationConstants.DEFAULT_MOVING_AVERAGE_PERIOD);
-                    List<decimal> weightedMovingAverages = weightedMovingAverageCalculator.Calculate(closePrices, CalculationConstants.DEFAULT_MOVING_AVERAGE_PERIOD);
+                    // Do the calculations for the moving averages -- run on separate threads using TPL
+                    Task<List<decimal>> simpleMovingAverageTask = Task.Run<List<decimal>>(() => simpleMovingAverageCalculator.Calculate(closePrices, CalculationConstants.DEFAULT_MOVING_AVERAGE_PERIOD));
+                    Task<List<decimal>> weightedMovingAverageTask = Task.Run<List<decimal>>(() => weightedMovingAverageCalculator.Calculate(closePrices, CalculationConstants.DEFAULT_MOVING_AVERAGE_PERIOD));
 
+                    // Wait for the threads to finish
+                    await Task.WhenAll(simpleMovingAverageTask, weightedMovingAverageTask);
+
+                    // Pull out the results from the tasks
+                    List<decimal> simpleMovingAverages = await simpleMovingAverageTask;
+                    List<decimal> weightedMovingAverages = await weightedMovingAverageTask;
+
+                    // Should this list construction also be multithreaded??
                     List<SimpleLinearRegressionCalculator> linearRegressionCalculators = new List<SimpleLinearRegressionCalculator>()
                     {
                         new SimpleLinearRegressionCalculator(closePrices),
@@ -71,7 +80,7 @@ namespace Prediction_API.Controllers
                     foreach (SimpleLinearRegressionCalculator regressionCalculator in linearRegressionCalculators)
                     {
                         // Calculate the regression at this index (date) -- how to translate the date passed in into index??
-                        regressionSumForDate += regressionCalculator.Calculate();
+                        regressionSumForDate += regressionCalculator.Calculate(1);
                     }
 
                     // Insert this prediction into the historical prediction service
@@ -82,7 +91,7 @@ namespace Prediction_API.Controllers
                         Price = regressionSumForDate / linearRegressionCalculators.Count
                     };
                     
-                    await this.historicalPredictionService.AddPrediction(prediction);
+                    await this.historicalPredictionService.AddPredictionAsync(prediction);
 
                     return Json(prediction);
                 }

@@ -29,7 +29,7 @@ namespace Prediction_API.Services
             this.configuration = configuration;
         }
 
-        public async Task<decimal> GetPrediction(string tickerSymbol, DateTime dateTime)
+        public async Task<decimal> GetPredictionAsync(string tickerSymbol, DateTime dateTime)
         {
             // Get the historical prediction from the RDS database for this index on this date
             // Connections are disposable!
@@ -41,7 +41,7 @@ namespace Prediction_API.Services
             }
         }
 
-        public async Task<List<Prediction>> GetPredictionsInRange(string tickerSymbol, DateTime start, DateTime end)
+        public async Task<List<Prediction>> GetPredictionsInRangeAsync(string tickerSymbol, DateTime start, DateTime end)
         {
             // Get all the predictions for a ticker in the defined range
             using (IDbConnection connection = this.Connection)
@@ -51,7 +51,7 @@ namespace Prediction_API.Services
             }
         }
 
-        public async Task<Prediction> AddPrediction(Prediction prediction)
+        public async Task<Prediction> AddPredictionAsync(Prediction prediction)
         {
             // Add the new prediction for this ticker to the RDS DB -- can't use Dapper on updates!
             using (IDbConnection connection = this.Connection)
