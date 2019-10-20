@@ -50,7 +50,6 @@ namespace Prediction_API.Tests
         public async Task TestSuccessWorkFlow()
         {
             var lambdaFunction = new LambdaEntryPoint();
-            Startup.Configuration[Startup.AppS3BucketKey] = this.BucketName;
 
             // Use sample API Gateway request that uploads an object with object key "foo.txt" and content of "Hello World".
             var requestStr = File.ReadAllText("./SampleRequests/S3ProxyController-Put.json");

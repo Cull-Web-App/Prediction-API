@@ -62,7 +62,7 @@ namespace Prediction_API.Services
                     param: new
                     {
                         Symbol = prediction.Ticker,
-                        Date = prediction.Date,
+                        Prediction_Date = prediction.Date,
                         Price = prediction.Price
                     }
                 );

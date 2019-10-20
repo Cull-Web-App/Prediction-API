@@ -26,31 +26,45 @@ namespace Prediction_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Predict([FromBody] string ticker, [FromBody] string interval, [FromBody] string date)
+        public async Task<IActionResult> Predict([FromBody] PredictionBodyWrapper predictionBodyWrapper)
         {
+            // Extract the body properties
+            string tickerSymbol = predictionBodyWrapper.TickerSymbol;
+            string interval = predictionBodyWrapper.Interval;
+            string date = predictionBodyWrapper.Date;
+
             // Convert the string date to a DateTime object
             DateTime dateTime = Convert.ToDateTime(date);
+            TimeSpan timeToPredictionDate = dateTime - DateTime.Now;
+            double daysToPredictionDate = timeToPredictionDate.TotalDays;
 
             // Probably should do some sort of check here to see if the date has already passed, because then actuals can be retrieved
+            if (daysToPredictionDate < 0)
+            {
+                Console.WriteLine("The date sent has already passed");
+
+                // What to do in this case??
+            }
 
             try
             {
                 // Check if this prediction has already been made -- if so return historical result
-                decimal predictedPrice = await this.historicalPredictionService.GetPredictionAsync(ticker, dateTime);
+                decimal predictedPrice = await this.historicalPredictionService.GetPredictionAsync(tickerSymbol, dateTime);
 
                 return Json(new Prediction()
                 {
-                    Ticker = ticker,
+                    Ticker = tickerSymbol,
                     Date = dateTime,
                     Price = predictedPrice
                 });
             }
             catch (InvalidOperationException)
             {
+                // In this case there was no result for the prediction in the DB -- run the prediction process
                 try
                 {
                     // There is no price for this price -- calculate the prediction and insert it into the prediction table
-                    List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(ticker, interval);
+                    List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
 
                     // Have the data from the stock service -- now run 20 day moving averages and regression on close prices
                     List<decimal> closePrices = tickers.Select(ticker => ticker.Close).ToList();
@@ -79,14 +93,14 @@ namespace Prediction_API.Controllers
                     decimal regressionSumForDate = 0;
                     foreach (SimpleLinearRegressionCalculator regressionCalculator in linearRegressionCalculators)
                     {
-                        // Calculate the regression at this index (date) -- how to translate the date passed in into index??
-                        regressionSumForDate += regressionCalculator.Calculate(1);
+                        // Calculate the regression at this index (date) -- this currently always assumes you're in days!!
+                        regressionSumForDate += regressionCalculator.Calculate(tickers.Count + Convert.ToInt32(daysToPredictionDate) - 1);
                     }
 
                     // Insert this prediction into the historical prediction service
                     Prediction prediction = new Prediction()
                     {
-                        Ticker = ticker,
+                        Ticker = tickerSymbol,
                         Date = dateTime,
                         Price = regressionSumForDate / linearRegressionCalculators.Count
                     };
