@@ -53,7 +53,7 @@ namespace Prediction_API.Controllers
 
                 return Json(new Prediction()
                 {
-                    Ticker = tickerSymbol,
+                    Symbol = tickerSymbol,
                     Date = dateTime,
                     Price = predictedPrice
                 });
@@ -64,7 +64,14 @@ namespace Prediction_API.Controllers
                 try
                 {
                     // There is no price for this price -- calculate the prediction and insert it into the prediction table
-                    List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
+                    // List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
+                    List<StockTicker> tickers = new List<StockTicker>()
+                    { 
+                        new StockTicker()
+                        {
+
+                        }
+                    }
 
                     // Have the data from the stock service -- now run 20 day moving averages and regression on close prices
                     List<decimal> closePrices = tickers.Select(ticker => ticker.Close).ToList();
@@ -100,7 +107,7 @@ namespace Prediction_API.Controllers
                     // Insert this prediction into the historical prediction service
                     Prediction prediction = new Prediction()
                     {
-                        Ticker = tickerSymbol,
+                        Symbol = tickerSymbol,
                         Date = dateTime,
                         Price = regressionSumForDate / linearRegressionCalculators.Count
                     };

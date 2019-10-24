@@ -22,7 +22,7 @@ namespace Prediction_API.Services
             get
             {
                 // TODO: Use constant for this connection string
-                return new NpgsqlConnection(this.configuration.GetConnectionString("PredictionStore-LOCAL"));
+                return new NpgsqlConnection(this.configuration.GetConnectionString("PredictionStore-Development"));
             }
         }
 
@@ -37,14 +37,19 @@ namespace Prediction_API.Services
             // Connections are disposable!
             using (IDbConnection connection = this.Connection)
             {
-                // TODO: Replace spName with the sproc name in Aurora Serverless
                 IEnumerable<decimal> prediction = await connection.QueryAsync<decimal>(
                     StoredProcedureConstants.GetPrediction,
                     commandType: CommandType.StoredProcedure,
                     param: new
                     {
-                        Symbol = tickerSymbol,
-                        Prediction_Date = dateTime
+                        symbol = new DbString()
+                        {
+                            Value = tickerSymbol,
+                            IsFixedLength = true,
+                            Length = 6,
+                            IsAnsi = true
+                        },
+                        prediction_date = dateTime
                     }
                 );
                 return prediction.First();
@@ -61,9 +66,15 @@ namespace Prediction_API.Services
                     commandType: CommandType.StoredProcedure,
                     param: new
                     {
-                        Symbol = tickerSymbol,
-                        Start_Date = start,
-                        End_Date = end
+                        symbol = new DbString()
+                        {
+                            Value = tickerSymbol,
+                            IsFixedLength = true,
+                            Length = 6,
+                            IsAnsi = true
+                        },
+                        start_date = start,
+                        end_date = end
                     }
                 );
                 return predictions.ToList();
@@ -80,15 +91,21 @@ namespace Prediction_API.Services
                     commandType: CommandType.StoredProcedure,
                     param: new
                     {
-                        Symbol = prediction.Ticker,
-                        Prediction_Date = prediction.Date,
-                        Price = prediction.Price
+                        symbol = new DbString()
+                        {
+                            Value = prediction.Symbol,
+                            IsFixedLength = true,
+                            Length = 6,
+                            IsAnsi = true
+                        },
+                        prediction_date = prediction.Date,
+                        price = prediction.Price
                     }
                 );
 
                 if (numAffectedRows != 1)
                 {
-                    throw new ApplicationException(string.Format("Failed to add prediction for ticker {0} for date {1} of price {2}", prediction.Ticker, prediction.Date, prediction.Price));
+                    throw new ApplicationException(string.Format("Failed to add prediction for ticker {0} for date {1} of price {2}", prediction.Symbol, prediction.Date, prediction.Price));
                 }
 
                 return prediction;

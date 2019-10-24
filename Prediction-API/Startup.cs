@@ -9,6 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Dapper;
+using Dapper.FluentMap;
+using Prediction_API.Models;
 using Prediction_API.Services;
 
 namespace Prediction_API
@@ -34,7 +37,7 @@ namespace Prediction_API
             services.AddHttpClient<IStockTickerService, StockTickerService>(client =>
             {
                 // Add all of this HTTP clients configurations here!
-                client.BaseAddress = new Uri(Startup.Configuration.GetValue<string>("API_URLS:FinancialDataAPI"));
+                client.BaseAddress = new Uri(Startup.Configuration.GetValue<string>("API_URLS:Development:FinancialDataAPI"));
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
         }
@@ -56,6 +59,19 @@ namespace Prediction_API
             app.UseEndpoints(endpoints => 
             {
                 endpoints.MapControllers();
+            });
+
+            this.ConfigureCustomDapperMappings();
+        }
+
+        public void ConfigureCustomDapperMappings()
+        {
+            // Use Dappers FluentMap to map the types to this
+            FluentMapper.Initialize(config =>
+            {
+                // Configure all entities in the current assembly with an optional namespaces filter.
+                config.AddConvention<PropertyTransformConvention>()
+                      .ForEntitiesInCurrentAssembly("Prediction_API.Models");
             });
         }
     }
