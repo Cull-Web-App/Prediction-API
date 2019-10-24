@@ -5,7 +5,7 @@ AS $$
 	FROM
 	   predictions as p
 	WHERE
-        p.symbol = symbol AND
-        p.prediction_date >= start_date AND
-        p.prediction_date <= end_date;
+        p.symbol = GetPredictionsInRange.symbol AND
+        p.prediction_date >= GetPredictionsInRange.start_date AND
+        p.prediction_date <= GetPredictionsInRange.end_date;
 $$ LANGUAGE SQL;

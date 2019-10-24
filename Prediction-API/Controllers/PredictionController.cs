@@ -43,7 +43,7 @@ namespace Prediction_API.Controllers
             {
                 Console.WriteLine("The date sent has already passed");
 
-                // What to do in this case??
+                // What to do in this case?? -- probably just retrieve the prediction or request the actual from financial data
             }
 
             try
@@ -64,14 +64,7 @@ namespace Prediction_API.Controllers
                 try
                 {
                     // There is no price for this price -- calculate the prediction and insert it into the prediction table
-                    // List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
-                    List<StockTicker> tickers = new List<StockTicker>()
-                    { 
-                        new StockTicker()
-                        {
-
-                        }
-                    }
+                    List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
 
                     // Have the data from the stock service -- now run 20 day moving averages and regression on close prices
                     List<decimal> closePrices = tickers.Select(ticker => ticker.Close).ToList();

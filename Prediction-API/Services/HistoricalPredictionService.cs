@@ -86,7 +86,8 @@ namespace Prediction_API.Services
             // Add the new prediction for this ticker to the RDS DB -- can't use Dapper on updates!
             using (IDbConnection connection = this.Connection)
             {
-                int numAffectedRows = await connection.ExecuteAsync(
+                // This method should return the number of affected rows, but it doesn't
+                await connection.ExecuteAsync(
                     StoredProcedureConstants.AddPrediction,
                     commandType: CommandType.StoredProcedure,
                     param: new
@@ -102,11 +103,6 @@ namespace Prediction_API.Services
                         price = prediction.Price
                     }
                 );
-
-                if (numAffectedRows != 1)
-                {
-                    throw new ApplicationException(string.Format("Failed to add prediction for ticker {0} for date {1} of price {2}", prediction.Symbol, prediction.Date, prediction.Price));
-                }
 
                 return prediction;
             }

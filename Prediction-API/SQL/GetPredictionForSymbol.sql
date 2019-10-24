@@ -4,8 +4,8 @@ AS $$
     SELECT
        p.price
     FROM
-       predictions as p
+       predictions AS p
     WHERE
-       p.symbol = symbol AND
-       EXTRACT(DAY FROM p.prediction_date - prediction_date) = 0;
+       p.symbol = GetPredictionForSymbol.symbol AND
+       EXTRACT(DAY FROM p.prediction_date - GetPredictionForSymbol.prediction_date) = 0;
 $$ LANGUAGE SQL;
