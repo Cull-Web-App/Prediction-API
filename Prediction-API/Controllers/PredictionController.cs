@@ -39,11 +39,17 @@ namespace Prediction_API.Controllers
             double daysToPredictionDate = timeToPredictionDate.TotalDays;
 
             // Probably should do some sort of check here to see if the date has already passed, because then actuals can be retrieved
-            if (daysToPredictionDate < 0)
+            if (daysToPredictionDate <= 0)
             {
                 Console.WriteLine("The date sent has already passed");
 
                 // What to do in this case?? -- probably just retrieve the prediction or request the actual from financial data
+                return Json(new Prediction()
+                {
+                    Symbol = tickerSymbol,
+                    Date = dateTime,
+                    Price = (await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval)).FirstOrDefault().Close
+                });
             }
 
             try
