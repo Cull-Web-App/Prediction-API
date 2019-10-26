@@ -3,11 +3,11 @@
 	"Transform": "AWS::Serverless-2016-10-31",
 	"Description": "An AWS Serverless Application that uses the ASP.NET Core framework running in Amazon Lambda.",
 	"Resources": {
-		"Get": {
+		"Predict": {
 			"Type" : "AWS::Serverless::Function",
 			"Properties": {
-				"Handler": "Prediction-API::Prediction-API.LambdaEntryPoint::FunctionHandlerAsync",
-				"Runtime": "dotnetcore3.0",
+				"Handler": "not_required_for_custom_runtime",
+				"Runtime": "provided",
 				"MemorySize": 256,
 				"Timeout": 60,
 				"Role": null,
@@ -23,7 +23,7 @@
 						"Type": "Api",
 						"Properties": {
 							"Path": "/{proxy+}",
-							"Method": "ANY"
+							"Method": "POST"
 						}
 					}
 				}
