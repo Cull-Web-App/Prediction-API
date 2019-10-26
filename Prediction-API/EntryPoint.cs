@@ -9,6 +9,7 @@ using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.Json;
+using Microsoft.Extensions.Hosting;
 
 namespace Prediction_API
 {
@@ -17,12 +18,12 @@ namespace Prediction_API
     /// </summary>
     public class EntryPoint
     {
-        public static async void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AWS_LAMBDA_FUNCTION_NAME")))
             {
                 // Run the application in local mode -- this will run ASP.NET Core 3.0 in kestrel
-                BuildWebHost(args).Run();
+                CreateHostBuilder(args).Build().Run();
             }
             else
             {
@@ -30,14 +31,18 @@ namespace Prediction_API
                 LambdaEntryPoint lambdaEntry = new LambdaEntryPoint();
                 Func<APIGatewayProxyRequest, ILambdaContext, Task<APIGatewayProxyResponse>> functionHandler = lambdaEntry.FunctionHandlerAsync;
                 using HandlerWrapper handlerWrapper = HandlerWrapper.GetHandlerWrapper(functionHandler, new JsonSerializer());
-                using LambdaBootstrap bootstrap = new LambdaBootstrap(handlerWrapper);
-                await bootstrap.RunAsync();
+                using (LambdaBootstrap bootstrap = new LambdaBootstrap(handlerWrapper))
+                {
+                    await bootstrap.RunAsync();
+                }
             }
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }

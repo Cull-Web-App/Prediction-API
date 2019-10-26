@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -33,6 +34,9 @@ namespace Prediction_API.Controllers
             string interval = predictionBodyWrapper.Interval;
             string date = predictionBodyWrapper.Date;
 
+            // Add logging
+            Console.WriteLine(string.Format("Received request for prediction for {0}'s price on date {1}", tickerSymbol, date));
+
             // Convert the string date to a DateTime object
             DateTime dateTime = Convert.ToDateTime(date);
             TimeSpan timeToPredictionDate = dateTime - DateTime.Now;
@@ -55,6 +59,7 @@ namespace Prediction_API.Controllers
             try
             {
                 // Check if this prediction has already been made -- if so return historical result
+                Console.WriteLine("Checking if prediction is already recorded");
                 decimal predictedPrice = await this.historicalPredictionService.GetPredictionAsync(tickerSymbol, dateTime);
 
                 return Json(new Prediction()
@@ -69,6 +74,7 @@ namespace Prediction_API.Controllers
                 // In this case there was no result for the prediction in the DB -- run the prediction process
                 try
                 {
+                    Console.WriteLine("Prediction wasn't recorded, creating a new prediction");
                     // There is no price for this price -- calculate the prediction and insert it into the prediction table
                     List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
 
@@ -110,6 +116,8 @@ namespace Prediction_API.Controllers
                         Date = dateTime,
                         Price = regressionSumForDate / linearRegressionCalculators.Count
                     };
+
+                    Console.WriteLine(string.Format("New prediction created: Symbol: {0}, Date: {1}, Price: {2}", prediction.Symbol, prediction.Date, prediction.Price));
                     
                     await this.historicalPredictionService.AddPredictionAsync(prediction);
 
@@ -120,6 +128,20 @@ namespace Prediction_API.Controllers
                     Console.WriteLine(ex.Message);
 
                     // Return some error code??
+                    return StatusCode(500);
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("There was an error accessing an HTTP resource.");
+
+                    return StatusCode(500);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("This is an unexpected error!!");
+
                     return StatusCode(500);
                 }
             }

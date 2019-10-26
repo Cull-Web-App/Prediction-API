@@ -16,13 +16,14 @@
 				],
 				"Environment" : {
 					"Variables" : {
+						"LAMBDA_NET_SERIALIZER_DEBUG": "true"
 					}
 				},
 				"Events": {
-					"PutResource": {
+					"CreatePrediction": {
 						"Type": "Api",
 						"Properties": {
-							"Path": "/{proxy+}",
+							"Path": "/prediction",
 							"Method": "POST"
 						}
 					}
