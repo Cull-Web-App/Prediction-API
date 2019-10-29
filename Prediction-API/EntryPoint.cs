@@ -10,6 +10,7 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.Json;
 using Microsoft.Extensions.Hosting;
+using Prediction_API.Services;
 
 namespace Prediction_API
 {
@@ -43,6 +44,14 @@ namespace Prediction_API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    // Only need to add the secrets manager connection strings when live env
+                    if (context.HostingEnvironment.IsDevelopment())
+                    {
+                        config.Add(new AWSConfigurationSource(new AWSSecretsManagerService()));
+                    }
                 });
     }
 }

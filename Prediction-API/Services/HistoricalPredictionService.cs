@@ -22,7 +22,7 @@ namespace Prediction_API.Services
             get
             {
                 // TODO: Use constant for this connection string
-                return new NpgsqlConnection(this.configuration.GetConnectionString("PredictionStore-Development"));
+                return new NpgsqlConnection(this.configuration.GetConnectionString(string.Format("PredictionStore-{0}", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))));
             }
         }
 

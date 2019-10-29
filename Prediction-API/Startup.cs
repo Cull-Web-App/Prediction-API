@@ -37,7 +37,7 @@ namespace Prediction_API
             services.AddHttpClient<IStockTickerService, StockTickerService>(client =>
             {
                 // Add all of this HTTP clients configurations here!
-                client.BaseAddress = new Uri(Startup.Configuration.GetValue<string>("API_URLS:Development:FinancialDataAPI"));
+                client.BaseAddress = new Uri(Startup.Configuration.GetValue<string>(string.Format("API_URLS:{0}:FinancialDataAPI", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))));
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
         }
