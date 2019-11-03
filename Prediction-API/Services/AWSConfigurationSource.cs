@@ -9,15 +9,17 @@ namespace Prediction_API.Services
     public class AWSConfigurationSource : IConfigurationSource
     {
         private readonly IAWSSecretsManagerService awsSecretsManagerService;
+        private readonly IConnectionService connectionService;
 
-        public AWSConfigurationSource(IAWSSecretsManagerService awsSecretsManagerService)
+        public AWSConfigurationSource(IAWSSecretsManagerService awsSecretsManagerService, IConnectionService connectionService)
         {
             this.awsSecretsManagerService = awsSecretsManagerService;
+            this.connectionService = connectionService;
         }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new AWSConfigurationProvider(this.awsSecretsManagerService);
+            return new AWSConfigurationProvider(this.awsSecretsManagerService, this.connectionService);
         }
     }
 }

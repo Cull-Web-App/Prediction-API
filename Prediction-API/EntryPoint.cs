@@ -50,7 +50,7 @@ namespace Prediction_API
                     // Only need to add the secrets manager connection strings when live env
                     if (context.HostingEnvironment.IsDevelopment())
                     {
-                        config.Add(new AWSConfigurationSource(new AWSSecretsManagerService()));
+                        config.Add(new AWSConfigurationSource(new AWSSecretsManagerService(), new ConnectionService()));
                     }
                 });
     }
