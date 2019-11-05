@@ -76,7 +76,16 @@ namespace Prediction_API.Controllers
                 {
                     Console.WriteLine("Prediction wasn't recorded, creating a new prediction");
                     // There is no price for this price -- calculate the prediction and insert it into the prediction table
-                    List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
+                    // List<StockTicker> tickers = await this.stockTickerService.GetStockTickersAsync(tickerSymbol, interval);
+
+                    List<StockTicker> tickers = new List<StockTicker>();
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        tickers.Add(new StockTicker()
+                        {
+                            Close = i
+                        });
+                    }
 
                     // Have the data from the stock service -- now run 20 day moving averages and regression on close prices
                     List<decimal> closePrices = tickers.Select(ticker => ticker.Close).ToList();

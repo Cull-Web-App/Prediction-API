@@ -16,7 +16,10 @@
 				],
 				"Environment" : {
 					"Variables" : {
-						"LAMBDA_NET_SERIALIZER_DEBUG": "true"
+						"LAMBDA_NET_SERIALIZER_DEBUG": "true",
+						"ASPNETCORE_ENVIRONMENT": "Production",
+						"CONNECTION_SECRETS": "CullConnectionCredentials",
+						"DB_NAME": "cullpostgresqldb"
 					}
 				},
 				"Events": {

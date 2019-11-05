@@ -5,6 +5,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.Extensions.Hosting;
+using Prediction_API.Services;
 
 namespace Prediction_API
 {
@@ -27,6 +29,14 @@ namespace Prediction_API
         protected override void Init(IWebHostBuilder builder)
         {
             builder
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    // Only need to add the secrets manager connection strings when live env
+                    if (!context.HostingEnvironment.IsDevelopment())
+                    {
+                        config.Add(new AWSConfigurationSource(new AWSSecretsManagerService(), new ConnectionService()));
+                    }
+                })
                 .UseStartup<Startup>();
         }
     }

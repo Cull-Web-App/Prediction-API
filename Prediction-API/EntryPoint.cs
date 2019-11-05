@@ -48,7 +48,7 @@ namespace Prediction_API
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     // Only need to add the secrets manager connection strings when live env
-                    if (context.HostingEnvironment.IsDevelopment())
+                    if (!context.HostingEnvironment.IsDevelopment())
                     {
                         config.Add(new AWSConfigurationSource(new AWSSecretsManagerService(), new ConnectionService()));
                     }
