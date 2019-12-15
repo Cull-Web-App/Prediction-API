@@ -1,0 +1,35 @@
+﻿version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies
+      - dotnet tool install -g Amazon.Lambda.Tools
+      - dotnet restore
+      - echo Dependencies installed successfully
+  pre_build:
+    commands:
+      - echo Updating Cloudformation Stack
+      - aws cloudformation update-stack --stack-name Cull-UI-Stack --template-body file://./cloudformation.template.yml --capabilities CAPABILITY_IAM || echo No stack updates
+  build:
+    commands:
+      - echo Building production application
+      - dotnet build
+      - echo Running test cases
+      - dotnet test
+      - echo Tests passed coverage
+  post_build:
+    commands:
+      - echo Build completed successfully
+      - echo Deploying function
+      - dotnet lambda deploy-function
+
+cache:
+  paths:
+     - '~/.nuget/packages'
+
+# Where the build artifacts are located -- is this necessary for the pipeline?
+artifacts:
+  files:
+    - '**/*'
+  base-directory: dist

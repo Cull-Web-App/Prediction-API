@@ -1,0 +1,43 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Transform": "AWS::Serverless-2016-10-31",
+	"Description": "An AWS Serverless Application that uses the ASP.NET Core framework running in Amazon Lambda.",
+	"Resources": {
+		"Predict": {
+			"Type" : "AWS::Serverless::Function",
+			"Properties": {
+				"Handler": "not_required_for_custom_runtime",
+				"Runtime": "provided",
+				"MemorySize": 256,
+				"Timeout": 60,
+				"Role": null,
+				"Policies": [
+					"AWSLambdaFullAccess"
+				],
+				"Environment" : {
+					"Variables" : {
+						"LAMBDA_NET_SERIALIZER_DEBUG": "true",
+						"ASPNETCORE_ENVIRONMENT": "Production",
+						"CONNECTION_SECRETS": "CullConnectionCredentials",
+						"DB_NAME": "cullpostgresqldb"
+					}
+				},
+				"Events": {
+					"CreatePrediction": {
+						"Type": "Api",
+						"Properties": {
+							"Path": "/prediction",
+							"Method": "POST"
+						}
+					}
+				}
+			}
+		}
+	},
+	"Parameters": {
+	},
+	"Conditions": {
+	},
+	"Outputs": {
+	}
+}
