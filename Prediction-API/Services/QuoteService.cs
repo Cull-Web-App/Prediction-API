@@ -8,20 +8,20 @@ using Prediction_API.Models;
 
 namespace Prediction_API.Services
 {
-    public class StockTickerService : IStockTickerService
+    public class QuoteService : IQuoteService
     {
         // Keep the injected HTTP client in this service -- should be the typed client for this service!
         private readonly HttpClient httpClient;
-
-        public StockTickerService(HttpClient httpClient)
+        
+        public QuoteService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
         }
 
-        public async Task<List<StockTicker>> GetStockTickersAsync(string ticker, string interval = "1y")
+        public async Task<List<Quote>> GetQuotesAsync(string symbol, string interval = "1y")
         {
             // Construct the request path for this get request -- add query parameters for the get -- should go off the base URI from client
-            string requestPath = string.Format("/data?ticker={0}&interval={1}", ticker, interval);
+            string requestPath = string.Format("/data?symbol={0}&interval={1}", symbol, interval);
 
             // Use the typed client to request from FinancialDataAPI the stock data for this time frame!
             HttpResponseMessage response = await this.httpClient.GetAsync(requestPath);
@@ -32,7 +32,7 @@ namespace Prediction_API.Services
                 string jsonString = await response.Content.ReadAsStringAsync();
 
                 // Deserialize the json string into the .NET objects
-                return JsonConvert.DeserializeObject<List<StockTicker>>(jsonString);
+                return JsonConvert.DeserializeObject<List<Quote>>(jsonString);
             }
             else
             {

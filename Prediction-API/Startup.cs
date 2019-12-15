@@ -34,7 +34,7 @@ namespace Prediction_API
             services.AddTransient<IHistoricalPredictionService, HistoricalPredictionService>();
 
             // Add each of the Typed Http clients for the services to DI -- this wires up both the interface and class for DI
-            services.AddHttpClient<IStockTickerService, StockTickerService>(client =>
+            services.AddHttpClient<IQuoteService, QuoteService>(client =>
             {
                 // Add all of this HTTP clients configurations here!
                 client.BaseAddress = new Uri(Startup.Configuration.GetValue<string>(string.Format("API_URLS:{0}:FinancialDataAPI", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))));

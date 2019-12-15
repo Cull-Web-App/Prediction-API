@@ -21,7 +21,6 @@ namespace Prediction_API.Services
         {
             get
             {
-                // TODO: Use constant for this connection string
                 return new NpgsqlConnection(this.configuration.GetConnectionString(string.Format("PredictionStore-{0}", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"))));
             }
         }
@@ -31,7 +30,7 @@ namespace Prediction_API.Services
             this.configuration = configuration;
         }
 
-        public async Task<decimal> GetPredictionAsync(string tickerSymbol, DateTime dateTime)
+        public async Task<decimal> GetPredictionAsync(string symbol, DateTime dateTime)
         {
             // Get the historical prediction from the RDS database for this index on this date
             // Connections are disposable!
@@ -44,7 +43,7 @@ namespace Prediction_API.Services
                     {
                         symbol = new DbString()
                         {
-                            Value = tickerSymbol,
+                            Value = symbol,
                             IsFixedLength = true,
                             Length = 6,
                             IsAnsi = true
@@ -56,9 +55,9 @@ namespace Prediction_API.Services
             }
         }
 
-        public async Task<List<Prediction>> GetPredictionsInRangeAsync(string tickerSymbol, DateTime start, DateTime end)
+        public async Task<List<Prediction>> GetPredictionsInRangeAsync(string symbol, DateTime start, DateTime end)
         {
-            // Get all the predictions for a ticker in the defined range
+            // Get all the predictions for a symbol in the defined range
             using (IDbConnection connection = this.Connection)
             {
                 IEnumerable<Prediction> predictions = await connection.QueryAsync<Prediction>(
@@ -68,7 +67,7 @@ namespace Prediction_API.Services
                     {
                         symbol = new DbString()
                         {
-                            Value = tickerSymbol,
+                            Value = symbol,
                             IsFixedLength = true,
                             Length = 6,
                             IsAnsi = true
@@ -83,7 +82,7 @@ namespace Prediction_API.Services
 
         public async Task<Prediction> AddPredictionAsync(Prediction prediction)
         {
-            // Add the new prediction for this ticker to the RDS DB -- can't use Dapper on updates!
+            // Add the new prediction for this symbol to the RDS DB -- can't use Dapper on updates!
             using (IDbConnection connection = this.Connection)
             {
                 // This method should return the number of affected rows, but it doesn't

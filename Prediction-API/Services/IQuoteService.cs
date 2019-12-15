@@ -6,8 +6,8 @@ using Prediction_API.Models;
 
 namespace Prediction_API.Services
 {
-    public interface IStockTickerService
+    public interface IQuoteService
     {
-        public Task<List<StockTicker>> GetStockTickersAsync(string ticker, string interval);
+        public Task<List<Quote>> GetQuotesAsync(string symbol, string interval);
     }
 }

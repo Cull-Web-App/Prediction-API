@@ -8,8 +8,8 @@ namespace Prediction_API.Services
 {
     public interface IHistoricalPredictionService
     {
-        public Task<decimal> GetPredictionAsync(string tickerSymbol, DateTime dateTime);
-        public Task<List<Prediction>> GetPredictionsInRangeAsync(string tickerSymbol, DateTime start, DateTime end);
+        public Task<decimal> GetPredictionAsync(string symbol, DateTime dateTime);
+        public Task<List<Prediction>> GetPredictionsInRangeAsync(string symbol, DateTime start, DateTime end);
         public Task<Prediction> AddPredictionAsync(Prediction prediction);
     }
 }

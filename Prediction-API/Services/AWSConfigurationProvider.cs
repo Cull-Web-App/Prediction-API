@@ -27,7 +27,7 @@ namespace Prediction_API.Services
                 dbSecretSet["DB_PASSWORD"],
                 dbSecretSet["DB_SERVER"],
                 Environment.GetEnvironmentVariable("DB_NAME"),
-                5542
+                5432
             ));
         }
     }

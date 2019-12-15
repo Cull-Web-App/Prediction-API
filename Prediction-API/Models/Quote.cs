@@ -2,7 +2,7 @@
 
 namespace Prediction_API.Models
 {
-    public class StockTicker
+    public class Quote
     {
         public decimal High { get; set; }
         public decimal Low { get; set; }

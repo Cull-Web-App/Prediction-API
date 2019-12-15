@@ -7,7 +7,7 @@ namespace Prediction_API.Models
 {
     public class PredictionBodyWrapper
     {
-        public string TickerSymbol { get; set; }
+        public string Symbol { get; set; }
         public string Interval { get; set; }
         public string Date { get; set; }
     }
